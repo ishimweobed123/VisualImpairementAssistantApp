@@ -50,9 +50,14 @@ class RolePermissionSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
+        // Add a permission for assigning roles
+        if (!Permission::where('name', 'role-assign')->exists()) {
+            Permission::create(['name' => 'role-assign']);
+        }
+
         // Create roles and assign permissions
         $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo($permissions);
+        $adminRole->givePermissionTo(array_merge($permissions, ['role-assign']));
 
         $caregiverRole = Role::create(['name' => 'caregiver']);
         $caregiverRole->givePermissionTo([
@@ -70,4 +75,4 @@ class RolePermissionSeeder extends Seeder
             'alert-list',
         ]);
     }
-} 
+}

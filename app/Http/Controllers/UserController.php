@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -45,7 +46,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        // Only allow users with 'role-assign' permission to assign roles
+        $roles = [];
+        if (auth()->user()->can('role-assign')) {
+            $roles = Role::all();
+        }
+        return view('users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -53,11 +59,20 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-        ]);
+        ];
+        if (auth()->user()->can('role-assign')) {
+        
+            $rules['roles'] = 'required|array';
+            $rules['roles.*'] = 'exists:roles,name';
+        }
+        $request->validate($rules);
         $user->update($request->only('name', 'email'));
+        if (auth()->user()->can('role-assign') && $request->has('roles')) {
+            $user->syncRoles($request->roles);
+        }
         return redirect()->route('users.index')->with('success', 'User updated!');
     }
 

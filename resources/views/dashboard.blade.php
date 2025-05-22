@@ -7,6 +7,11 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            {{-- Debug output for userSignupTrends --}}
+            @if(isset($userSignupTrends))
+                <pre style="background:#eee;padding:10px;overflow:auto;max-width:100vw;">{{ var_export($userSignupTrends, true) }}</pre>
+            @endif
+
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -142,7 +147,7 @@
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">Recent Locations</h3>
-                            <a href="{{ route('locations.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+                            <a href="{{ route('locations.index', ['device' => $recentLocations->first()?->device->id ?? 1]) }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -181,6 +186,147 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Device Usage Trend Chart (last 7 days) -->
+            @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Device Usage Trend (Last 7 Days)</h3>
+                <canvas id="deviceTrendChart" height="100"></canvas>
+            </div>
+            @endif
+
+            <!-- User Signup Trend Chart (last 7 days) -->
+            @if(isset($userSignupTrends) && $userSignupTrends)
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">User Signups Trend (Last 7 Days)</h3>
+                <canvas id="userSignupTrendChart" height="100"></canvas>
+            </div>
+            @endif
+
+            <!-- Notifications & System Health Widgets -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <!-- Notifications -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" /></svg>
+                            Notifications
+                        </h3>
+                        <ul class="space-y-3">
+                            @forelse($notifications as $notification)
+                                <li class="flex items-start bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                                    <div class="flex-shrink-0 mt-1">
+                                        <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M8.257 3.099c.366-.446.957-.446 1.323 0l7.451 9.09c.329.401.034.911-.462.911H2.268c-.496 0-.791-.51-.462-.911l7.451-9.09z" /></svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-800">{{ $notification['title'] }}</p>
+                                        <p class="text-xs text-gray-500">{{ $notification['time'] }}</p>
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="text-gray-500 text-sm">No new notifications.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
+                <!-- System Health -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            System Health
+                        </h3>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between items-center">
+                                <span class="text-sm text-gray-700">Server Status</span>
+                                <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Online</span>
+                            </li>
+                            <li class="flex justify-between items-center">
+                                <span class="text-sm text-gray-700">API Latency</span>
+                                <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">{{ $systemHealth['api_latency'] ?? 'N/A' }} ms</span>
+                            </li>
+                            <li class="flex justify-between items-center">
+                                <span class="text-sm text-gray-700">Database</span>
+                                <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">{{ $systemHealth['database'] ?? 'OK' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    @push('scripts')
+    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const deviceTrendLabels = {!! json_encode($deviceTrends ? collect($deviceTrends)->pluck('date')->values() : []) !!};
+        const deviceTrendCounts = {!! json_encode($deviceTrends ? collect($deviceTrends)->pluck('count')->values() : []) !!};
+        @if(isset($userSignupTrends) && $userSignupTrends)
+        const userSignupTrendLabels = {!! json_encode(collect($userSignupTrends)->pluck('date')->values()) !!};
+        const userSignupTrendCounts = {!! json_encode(collect($userSignupTrends)->pluck('count')->values()) !!};
+        @endif
+        const ctx = document.getElementById('deviceTrendChart')?.getContext('2d');
+        if(ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: deviceTrendLabels,
+                    datasets: [{
+                        label: 'Devices Added',
+                        data: deviceTrendCounts,
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision:0 } }
+                    }
+                }
+            });
+        }
+        @if(isset($userSignupTrends) && $userSignupTrends)
+        const ctxSignup = document.getElementById('userSignupTrendChart')?.getContext('2d');
+        if(ctxSignup) {
+            new Chart(ctxSignup, {
+                type: 'line',
+                data: {
+                    labels: userSignupTrendLabels,
+                    datasets: [{
+                        label: 'User Signups',
+                        data: userSignupTrendCounts,
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision:0 } }
+                    }
+                }
+            });
+        }
+        @endif
+    </script>
+    @endif
+    @endpush
 </x-app-layout>

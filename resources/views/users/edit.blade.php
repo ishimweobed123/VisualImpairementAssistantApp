@@ -13,6 +13,9 @@
             <label>Email</label>
             <input type="email" name="email" value="{{ $user->email }}" required>
         </div>
+        @if(!empty($roles))
+            @include('users.partials.roles', ['roles' => $roles, 'user' => $user])
+        @endif
         <button type="submit">Update</button>
     </form>
 </x-app-layout>

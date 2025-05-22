@@ -6,7 +6,7 @@
     <table class="min-w-full bg-white">
         <thead>
             <tr>
-                <th>Name</th><th>Email</th><th>Actions</th>
+                <th>Name</th><th>Email</th><th>Roles</th><th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -14,6 +14,7 @@
             <tr>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->roles->pluck('name')->join(', ') }}</td>
                 <td>
                     <a href="{{ route('users.edit', $user) }}">Edit</a>
                     <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">

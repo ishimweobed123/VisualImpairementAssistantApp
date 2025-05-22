@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Device;
 use App\Models\Location;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         // Get total users (only for admin)
         $totalUsers = $user->hasRole('admin') ? User::count() : null;
@@ -47,6 +48,43 @@ class DashboardController extends Controller
                 ->get()
             : collect();
 
+        // Device trend data for the last 7 days
+        $deviceTrends = [];
+        $startDate = Carbon::now()->subDays(6);
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startDate->copy()->addDays($i);
+            $count = $devices->where('created_at', '>=', $date->startOfDay())
+                ->where('created_at', '<=', $date->endOfDay())
+                ->count();
+            $deviceTrends[] = [
+                'date' => $date->format('Y-m-d'),
+                'count' => $count
+            ];
+        }
+
+        // User signup trend data for the last 7 days (admin/manager only)
+        $userSignupTrends = null;
+        if ($user->hasRole('admin') || $user->hasRole('manager')) {
+            $userSignupTrends = [];
+            $startDate = Carbon::now()->subDays(6);
+            for ($i = 0; $i < 7; $i++) {
+                $date = $startDate->copy()->addDays($i);
+                $dateString = $date->format('Y-m-d');
+                $count = User::whereDate('created_at', $dateString)->count();
+                $userSignupTrends[] = [
+                    'date' => $dateString,
+                    'count' => $count
+                ];
+            }
+        }
+
+        // Example notifications (replace with real logic as needed)
+        $notifications = [
+            [
+                'title' => 'Welcome to your dashboard!',
+                'time' => now()->diffForHumans(),
+            ],
+        ];
         return view('dashboard', compact(
             'totalUsers',
             'totalDevices',
@@ -54,7 +92,10 @@ class DashboardController extends Controller
             'locationsToday',
             'recentActivities',
             'deviceStatus',
-            'recentLocations'
+            'recentLocations',
+            'deviceTrends',
+            'userSignupTrends',
+            'notifications'
         ));
     }
     
@@ -142,4 +183,4 @@ class DashboardController extends Controller
             ]
         ];
     }
-} 
+}
