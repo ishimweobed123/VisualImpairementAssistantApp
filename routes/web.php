@@ -3,6 +3,7 @@
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,6 +25,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/devices/{device}/locations/latest', [LocationController::class, 'latest'])->name('locations.latest');
     Route::get('/devices/{device}/locations/history', [LocationController::class, 'history'])->name('locations.history');
     Route::get('/devices/{device}/locations/export', [LocationController::class, 'export'])->name('locations.export');
+});
+
+Route::middleware(['auth', 'can:manage-users'])->group(function () {
+    Route::resource('users', UserController::class);
 });
 
 require __DIR__.'/auth.php';
