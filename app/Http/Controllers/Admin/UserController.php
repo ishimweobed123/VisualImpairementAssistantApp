@@ -51,7 +51,9 @@ class UserController extends Controller
         ]);
 
         if ($request->roles) {
-            $user->syncRoles($request->roles);
+            // Convert role IDs to names before syncing
+            $roleNames = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
+            $user->syncRoles($roleNames);
         }
 
         Activity::create([
@@ -97,7 +99,9 @@ class UserController extends Controller
             'password' => $request->password ? bcrypt($request->password) : $user->password,
         ]);
 
-        $user->syncRoles($request->roles ?? []);
+        // Convert role IDs to names before syncing
+        $roleNames = Role::whereIn('id', $request->roles ?? [])->pluck('name')->toArray();
+        $user->syncRoles($roleNames);
 
         Activity::create([
             'log_name' => 'user',

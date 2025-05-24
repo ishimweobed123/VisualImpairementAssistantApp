@@ -41,7 +41,9 @@ class RoleController extends Controller
 
         $role = Role::create(['name' => $request->name]);
         if ($request->permissions) {
-            $role->syncPermissions($request->permissions);
+            // Convert permission IDs to names before syncing
+            $permissionNames = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
+            $role->syncPermissions($permissionNames);
         }
 
         Activity::create([
@@ -77,7 +79,9 @@ class RoleController extends Controller
         ]);
 
         $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions ?? []);
+        // Convert permission IDs to names before syncing
+        $permissionNames = Permission::whereIn('id', $request->permissions ?? [])->pluck('name')->toArray();
+        $role->syncPermissions($permissionNames);
 
         Activity::create([
             'log_name' => 'role',

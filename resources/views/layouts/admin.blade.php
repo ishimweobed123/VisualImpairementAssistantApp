@@ -23,8 +23,8 @@
                         {{ Auth::user()->name }} <i class="fas fa-user"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a href="{{ route('logout') }}" class="dropdown-item"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a href="{{ route('logout') }}" class="dropdown-item logout-link"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit(); closeDropdown(this);">
                             Logout
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -114,5 +114,19 @@
         </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script>
+        function closeDropdown(element) {
+            // Find the closest dropdown-menu and hide it
+            var dropdownMenu = element.closest('.dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.remove('show');
+            }
+            // Also close the parent if needed (Bootstrap 4/5 compatibility)
+            var parent = dropdownMenu && dropdownMenu.parentElement;
+            if (parent && parent.classList.contains('show')) {
+                parent.classList.remove('show');
+            }
+        }
+    </script>
 </body>
 </html>
