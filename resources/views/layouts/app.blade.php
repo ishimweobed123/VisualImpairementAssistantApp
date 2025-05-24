@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'VisualImpairedAssistance') }} - @yield('title')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -22,9 +22,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('user.devices.index') }}">Devices</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" href="{{ route('profile.show') }}">Profile</a>
-                        </li>
+                        </li> --}}
                         @if (auth()->user()->hasRole('admin'))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
@@ -78,6 +78,6 @@
         @yield('content')
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 </body>
 </html>
