@@ -1,115 +1,143 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Device;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
+use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DeviceController extends Controller
 {
-    use AuthorizesRequests;
+    public function __construct()
+    {
+        $this->middleware(['auth', 'verified']);
+        $this->middleware('permission:device-list|device-create|device-edit|device-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:device-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:device-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:device-delete', ['only' => ['destroy']]);
+    }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $this->authorize('device-list');
-        
-        $devices = Device::when(!Auth::user()->hasRole('admin'), function ($query) {
-            return $query->where('user_id', Auth::id());
-        })->get();
-
-        return view('devices.index', compact('devices'));
+        $devices = Auth::user()->devices()->latest()->get();
+        return view('user.devices.index', compact('devices'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $this->authorize('device-create');
-        return view('devices.create');
+        return view('user.devices.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $this->authorize('device-create');
-
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'device_id' => 'required|string|max:255|unique:devices',
-            'type' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:100',
+            'mac_address' => 'required|string|unique:devices,mac_address',
         ]);
 
-        $device = Device::create([
-            ...$validated,
-            'user_id' => Auth::id(),
-            'status' => 'offline',
-            'battery_level' => 100,
-            'is_active' => true,
+        $device = Auth::user()->devices()->create([
+            'name' => $request->name,
+            'type' => $request->type,
+            'mac_address' => $request->mac_address,
+            'status' => 'active',
         ]);
 
-        return redirect()->route('devices.index')
-            ->with('success', 'Device created successfully.');
+        Activity::create([
+            'log_name' => 'device',
+            'description' => 'Device created',
+            'subject_type' => Device::class,
+            'subject_id' => $device->id,
+            'causer_type' => User::class,
+            'causer_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('user.devices.index')->with('success', 'Device added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Device $device)
     {
-        $this->authorize('view', $device); // Optional authorization check
-        return view('devices.show', compact('device'));
+        $this->authorize('view', $device);
+        $obstacles = $device->obstacles()->latest()->take(10)->get();
+        return view('user.devices.show', compact('device', 'obstacles'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Device $device)
     {
-        $this->authorize('update', $device); // Optional authorization check
-        return view('devices.edit', compact('device'));
+        $this->authorize('update', $device);
+        return view('user.devices.edit', compact('device'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Device $device)
     {
-        $this->authorize('device-edit');
         $this->authorize('update', $device);
-
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'is_active' => 'boolean',
+            'type' => 'nullable|string|max:100',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        $device->update($validated);
+        $device->update([
+            'name' => $request->name,
+            'type' => $request->type,
+            'status' => $request->status,
+        ]);
 
-        return redirect()->route('devices.index')
-            ->with('success', 'Device updated successfully.');
+        Activity::create([
+            'log_name' => 'device',
+            'description' => 'Device updated',
+            'subject_type' => Device::class,
+            'subject_id' => $device->id,
+            'causer_type' => User::class,
+            'causer_id' => Auth::id()
+                ]);
+
+        return redirect()->route('user.devices.index')->with('success', 'Device updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Device $device)
     {
-        $this->authorize('device-delete');
         $this->authorize('delete', $device);
-
         $device->delete();
 
-        return redirect()->route('devices.index')
-            ->with('success', 'Device deleted successfully.');
+        Activity::create([
+            'log_name' => 'device',
+            'description' => 'Device deleted',
+            'subject_type' => Device::class,
+            'subject_id' => $device->id,
+            'causer_type' => User::class,
+            'causer_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('user.devices.index')->with('success', 'Device deleted successfully.');
+    }
+
+    public function authenticate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'mac_address' => 'required|string',
+        ]);
+
+        $device = Device::where('mac_address', $request->mac_address)->first();
+
+        if (!$device) {
+            return response()->json(['error' => 'Device not found'], 404);
+        }
+
+        $token = Str::random(60);
+        $device->update(['api_token' => hash('sha256', $token)]);
+
+        Activity::create([
+            'log_name' => 'device',
+            'description' => 'Device authenticated',
+            'subject_type' => Device::class,
+            'subject_id' => $device->id,
+            'causer_type' => null,
+            'causer_id' => null,
+        ]);
+
+        return response()->json(['token' => $token], 200);
     }
 }

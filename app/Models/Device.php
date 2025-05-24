@@ -1,48 +1,27 @@
 <?php
-
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Device extends Model
 {
-    use HasFactory;
+    use LogsActivity;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'device_id',
-        'type',
-        'status',
-        'battery_level',
-        'last_connected',
-        'user_id',
-        'location',
-        'is_active',
+        'name', 'type', 'status', 'user_id', 'mac_address', 'api_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'last_connected' => 'datetime',
-        'is_active' => 'boolean',
-        'battery_level' => 'integer',
-    ];
-
-    /**
-     * Get the user that owns the device.
-     */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'type', 'status', 'mac_address'])
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => "Device {$eventName}");
     }
 }

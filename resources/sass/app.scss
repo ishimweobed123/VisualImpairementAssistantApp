@@ -1,0 +1,12 @@
+// 1. Bootstrap via @use MUST come first
+@use 'bootstrap/scss/bootstrap' as *;
+
+// 2. Variables (can still use @import if it's a local file)
+@import 'variables';
+
+// 3. Fonts (CSS-only, allowed after @use)
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// 4. AdminLTE and FontAwesome (pure CSS imports)
+@import 'admin-lte/dist/css/adminlte.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
