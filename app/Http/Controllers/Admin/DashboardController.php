@@ -28,9 +28,8 @@ class DashboardController extends Controller
 
         // Recent activities
         $recentActivities = Activity::query()
-            ->with(['causer' => function ($query) {
-                $query->where('causer_type', \App\Models\User::class);
-            }])
+            ->where('causer_type', User::class)
+            ->with('causer')
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -48,7 +47,8 @@ class DashboardController extends Controller
             $zoneData[$day] = DangerZone::whereDate('created_at', $day)->count();
         }
 
-        return view('admin.dashboard', compact(
+        // Return the correct view path
+        return view('admin.dashboard.index', compact(
             'userCount',
             'deviceCount',
             'zoneCount',
