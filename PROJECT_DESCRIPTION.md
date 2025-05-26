@@ -105,58 +105,117 @@ The **AI and IoT components** of the system are designed to be implemented direc
 
 ---
 
-## Mobile Device Integration for AI and IoT
+## Logical Design Overview
 
-The VisualImpairedAssistance platform is designed with flexibility in mind, making it easy to integrate with mobile devices (such as smartphones or dedicated IoT hardware) for both AI and IoT functionalities.
+VisualImpairedAssistance is logically divided into several core modules, each with clear responsibilities and interfaces. This modular approach ensures maintainability, scalability, and ease of integration with external (mobile/IoT) devices.
 
-### Why Integration is Easy
+---
 
-- **API-Driven Architecture:**  
-  The Laravel backend exposes RESTful APIs, allowing any mobile device or IoT hardware to securely send and receive data (such as user activity, device status, or sensor readings).
+### 1. **Core Modules**
 
-- **Standard Protocols:**  
-  Devices can communicate using standard HTTP(S) requests, making integration possible with Android, iOS, or embedded systems (using languages like Python, Java, C++, etc.).
+#### **A. User Management**
+- Handles user registration, authentication, and profile management.
+- Supports role-based access control (admin, user, etc.).
+- Allows assignment of devices to users.
 
-- **Authentication & Security:**  
-  The platform supports secure authentication, so only authorized devices and users can access or update data.
+#### **B. Device Management**
+- Registers and manages IoT/AI devices.
+- Assigns devices to users.
+- Receives and stores device data (location, status, sensor readings).
 
-- **Modular Design:**  
-  Device registration, user assignment, and data reporting are handled as separate modules, so new device types or features can be added without changing the core system.
+#### **C. Danger Zone Management**
+- Allows admins to define, edit, and monitor danger zones.
+- Associates danger zones with device/user activity.
 
-### What the Devices Will Do
+#### **D. Roles & Permissions**
+- Uses Spatie Laravel Permission for flexible role and permission assignment.
+- Controls access to all system features.
 
-- **IoT Devices:**
-  - Collect real-time data from sensors (e.g., GPS, proximity, obstacle detection, environmental hazards).
-  - Send this data to the Laravel backend for monitoring, logging, and alerting.
-  - Receive configuration updates or alerts from the web platform.
+#### **E. Reporting**
+- Generates reports on users, devices, and danger zones.
+- Allows export of reports as PDF and Excel files.
 
-- **AI-Enabled Devices:**
-  - Use onboard AI (or cloud-based AI) to process sensor data for tasks such as:
-    - Obstacle detection and avoidance
-    - Voice guidance and feedback
-    - Predictive alerts for dangerous situations
-  - Provide real-time assistance to visually impaired users based on AI analysis.
-  - Optionally, send processed results or summaries to the backend for reporting and analytics.
+#### **F. Dashboard**
+- Provides visual summaries (counts, charts, recent activity).
+- Displays user statistics and system health.
 
-- **Mobile Apps:**
-  - Can act as a bridge between the user and the IoT device, displaying alerts, statistics, or navigation help.
-  - Allow users or caregivers to view reports, receive notifications, or manage device settings directly from their phone.
+#### **G. API Layer**
+- Exposes RESTful endpoints for device and mobile app integration.
+- Handles secure data exchange between devices and the backend.
 
-### Example Integration Flow
+---
 
-1. **Device Setup:**  
-   A new device is registered in the web dashboard and assigned to a user.
+### 2. **Integration with Mobile Devices and IoT/AI**
 
-2. **Data Collection:**  
-   The device collects sensor data and processes it locally (AI) or sends it to the backend (IoT).
+#### **Why Integration is Easy**
+- **API-Driven:** All device and mobile interactions use RESTful APIs, making it easy for any platform (Android, iOS, embedded) to connect.
+- **Standard Protocols:** Uses HTTP(S) and JSON for communication.
+- **Authentication:** Secure token-based authentication for devices and users.
+- **Modular:** Device logic is decoupled from the web platform, so new device types or features can be added without changing the core system.
 
-3. **Communication:**  
-   The device communicates with the Laravel backend via API endpoints, sending data and receiving updates.
+#### **Device Responsibilities**
+- **IoT Devices:** Collect sensor data (e.g., GPS, obstacles), send to backend, receive configuration/alerts.
+- **AI Devices:** Process sensor data locally (e.g., obstacle detection, voice guidance), provide real-time feedback, optionally send processed results to backend.
+- **Mobile Apps:** Bridge between user and device, display alerts/statistics, allow user/caregiver interaction.
 
-4. **User Interaction:**  
-   The user receives real-time feedback (audio, vibration, etc.) from the device, and caregivers can monitor activity via the dashboard or a mobile app.
+#### **Integration Flow**
+1. **Device Registration:** Admin registers device and assigns to user via dashboard.
+2. **Data Collection:** Device collects/processes data (AI/IoT).
+3. **Data Transmission:** Device sends data to backend via API.
+4. **Backend Processing:** Backend stores data, triggers alerts, updates dashboard.
+5. **User Feedback:** Device/mobile app provides real-time feedback to user; caregivers can monitor via dashboard or app.
+6. **Reporting:** Admin generates and exports reports as PDF/Excel.
+
+---
+
+### 3. **Logical Data Flow**
+
+1. **Admin/User logs in** → Accesses dashboard and management features.
+2. **Device collects data** → Sends to backend via API.
+3. **Backend processes data** → Stores in database, updates dashboard, triggers alerts if needed.
+4. **Reports generated** → Can be downloaded as PDF/Excel.
+5. **Mobile app/device receives updates** → Provides feedback to user.
+
+---
+
+### 4. **Entities and Relationships**
+
+- **User**: Has roles, can own devices, generates activity logs.
+- **Device**: Assigned to user, sends data, can be linked to danger zones.
+- **Danger Zone**: Defined by admin, linked to device/user activity.
+- **Role/Permission**: Assigned to users for access control.
+- **Activity Log**: Records user/device actions for reporting and auditing.
+
+---
+
+### 5. **Summary**
+
+- **Separation of Concerns:** Each module (users, devices, zones, reports) is logically separated.
+- **Easy Integration:** API-first design enables seamless connection with mobile and IoT/AI devices.
+- **Extensible:** New device types, AI features, or reporting formats can be added without major changes.
+- **Secure:** Role-based access and secure API endpoints.
+- **User-Friendly:** Dashboard and reports are accessible and exportable.
 
 ---
 
 **In summary:**  
-The system is built to easily connect with a wide range of mobile and IoT devices, enabling advanced AI-powered assistance and real-time monitoring for visually impaired users. Devices will handle data collection, AI processing, and user feedback, while the web platform manages users, devices, zones, and reporting.
+The logical design ensures that the system is robust, maintainable, and ready for integration with a wide range of mobile and IoT/AI devices. Devices handle data collection and AI processing, while the web platform manages users, devices, zones, and reporting, all connected through secure and well-defined APIs.
+
+---
+
+## Data Flow Diagrams (DFD)
+
+### Level 0: Context Diagram
+![DFD Level 0 - Context Diagram](images/dfd_level0_context.png)
+
+### Level 1: Main Processes
+![DFD Level 1 - Main Processes](images/dfd_level1_main.png)
+
+### Level 2: Device Data Flow Example
+![DFD Level 2 - Device Data Flow](images/dfd_level2_device.png)
+
+---
+
+## Entity Relationship Diagram (ERD)
+
+![Entity Relationship Diagram](images/erd.png)
