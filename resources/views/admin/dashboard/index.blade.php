@@ -1,10 +1,9 @@
 @extends('layouts.admin')
 @section('content')
     <div class="container-fluid">
-        <!-- Widgets -->
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
+                <div class="dashboard-card bg1">
                     <div class="inner">
                         <h3>{{ $userCount }}</h3>
                         <p>Total Users</p>
@@ -16,7 +15,7 @@
                 </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
+                <div class="dashboard-card bg2">
                     <div class="inner">
                         <h3>{{ $deviceCount }}</h3>
                         <p>Devices</p>
@@ -28,7 +27,7 @@
                 </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
+                <div class="dashboard-card bg3">
                     <div class="inner">
                         <h3>{{ $zoneCount }}</h3>
                         <p>Danger Zones</p>
@@ -40,7 +39,7 @@
                 </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-primary">
+                <div class="dashboard-card bg4">
                     <div class="inner">
                         <h3>{{ $activeUsers }}</h3>
                         <p>Active Users</p>
@@ -52,57 +51,42 @@
                 </div>
             </div>
         </div>
-
-        <!-- User Stats -->
         <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">User Statistics</h3>
-                    </div>
+            <!-- User Statistics -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <p><strong>Active Users:</strong> {{ $activeUsers }}</p>
-                        <p><strong>Inactive Users:</strong> {{ $inactiveUsers }}</p>
+                        <h5><i class="fas fa-chart-pie text-info"></i> User Statistics</h5>
+                        <span class="stat-badge active">Active Users: {{ $activeUsers }}</span><br>
+                        <span class="stat-badge inactive">Inactive Users: {{ $inactiveUsers }}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Activities -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5><i class="fas fa-history text-warning"></i> Recent Activities</h5>
+                        @foreach($recentActivities as $activity)
+                            <div class="mb-2">
+                                <span class="fw-bold">{{ $activity->description }}</span>
+                                <span class="text-muted">by {{ $activity->causer->name ?? 'System' }}</span>
+                                <div class="small text-secondary">{{ $activity->created_at->diffForHumans() }}</div>
+                            </div>
+                            @if(!$loop->last)
+                                <hr>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Recent Activities -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Activities</h3>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            @forelse ($recentActivities as $activity)
-                                <li class="list-group-item">
-                                    <strong>{{ $activity->description }}</strong> by
-                                    @if ($activity->causer)
-                                        {{ $activity->causer->name }}
-                                    @else
-                                        Unknown
-                                    @endif
-                                    <br>
-                                    <small>{{ $activity->created_at->diffForHumans() }}</small>
-                                </li>
-                            @empty
-                                <li class="list-group-item">No recent activities.</li>
-                            @endforelse
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Chart -->
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Devices and Danger Zones (Last 7 Days)</h3>
+                <div class="card shadow rounded-lg">
+                    <div class="card-header bg-white border-0">
+                        <h3 class="card-title mb-0"><i class="fas fa-chart-bar text-primary"></i> Devices and Danger Zones (Last 7 Days)</h3>
                     </div>
                     <div class="card-body">
                         <canvas id="activityChart" height="100"></canvas>
