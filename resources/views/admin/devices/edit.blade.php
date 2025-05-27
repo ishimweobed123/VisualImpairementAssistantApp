@@ -21,8 +21,8 @@
                 <div class="col-md-6">
                     <select id="type" class="form-control @error('type') is-invalid @enderror" name="type">
                         <option value="">Select Type</option>
-                        <option value="ultrasonic" {{ old('type', $device->type) == 'ultrasonic' ? 'selected' : '' }}>Ultrasonic</option>
-                        <option value="infrared" {{ old('type', $device->type) == 'infrared' ? 'selected' : '' }}>Infrared</option>
+                        <option value="Smart cane" {{ old('type', $device->type) == 'Smart cane' ? 'selected' : '' }}>Smart cane</option>
+                        <option value="wearable device" {{ old('type', $device->type) == 'wearable device' ? 'selected' : '' }}>wearable device</option>
                         <option value="camera" {{ old('type', $device->type) == 'camera' ? 'selected' : '' }}>Camera</option>
                     </select>
                     @error('type')

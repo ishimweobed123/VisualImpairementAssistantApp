@@ -1,6 +1,32 @@
 @extends('layouts.admin')
 @section('content')
     <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-end align-items-center">
+                <!-- Back Button -->
+                <button onclick="window.history.back()" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <!-- Back to Home Button -->
+                <a href="/" class="btn btn-primary me-2">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <!-- Logout Dropdown (for mobile/extra access) -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i> {{ Auth::user()->name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form-dashboard').submit();">Logout</a>
+                            <form id="logout-form-dashboard" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="row mb-4">
             <div class="col-lg-3 col-6">
                 <div class="dashboard-card bg1">

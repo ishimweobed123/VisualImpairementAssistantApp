@@ -17,6 +17,12 @@ class Device extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Relationship: Device has many Obstacles
+    public function obstacles()
+    {
+        return $this->hasMany(Obstacle::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
