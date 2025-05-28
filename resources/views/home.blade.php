@@ -13,11 +13,12 @@
                 <i class="fas fa-user fa-2x text-success mb-2"></i>
                 <div class="fw-bold fs-4">Hi, {{ Auth::user()->name }}!</div>
                 <div>
-                    <span class="fw-opacity-75 text-muted">Role: 
+                    <span class="fw-opacity-75 text-muted"> 
+                        <!-- Role:  -->
                         @if(Auth::user()->roles->count())
-                            @foreach(Auth::user()->roles as $role)
+                            <!-- @foreach(Auth::user()->roles as $role)
                                 <span class="badge bg-primary">{{ ucfirst($role->name) }}</span>
-                            @endforeach
+                            @endforeach -->
                         @else
                             <span class="badge bg-secondary">User</span>
                         @endif
@@ -56,7 +57,7 @@
                                         @elseif($perm == 'zone-list')
                                             <a href="{{ Auth::user()->hasRole('admin') ? route('admin.danger-zones.index') : '#' }}" class="btn btn-outline-primary btn-sm">View Zones</a>
                                         @elseif($perm == 'zone-create')
-                                            <a href="{{ Auth::user()->hasRole('admin') ? route('admin.danger-zones.create') : '#' }}" class="btn btn-outline-success btn-sm">Add Zone</a>
+                                            <a href="{{ Auth::user()->hasRole('admin') ? route('admin.danger-zones.create') : route('user.zones.create') }}" class="btn btn-outline-success btn-sm">Add Zone</a>
                                         @elseif($perm == 'zone-edit')
                                             <a href="{{ Auth::user()->hasRole('admin') ? route('admin.danger-zones.index') : '#' }}" class="btn btn-outline-warning btn-sm">Edit Zone</a>
                                         @elseif($perm == 'zone-delete')

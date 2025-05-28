@@ -44,4 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Only non-admin users can request permissions
     Route::post('/permission-request', [UserPermissionController::class, 'requestPermission'])
         ->name('user.permission.request');
+
+    // User-facing zone routes for dynamic permissions
+    Route::resource('zones', \App\Http\Controllers\UserZoneController::class, [
+        'as' => 'user'
+    ]);
 });

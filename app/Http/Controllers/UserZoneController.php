@@ -23,11 +23,19 @@ class UserZoneController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'radius' => 'required|integer',
             'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
         ]);
         DangerZone::create([
             'name' => $request->name,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'radius' => $request->radius,
             'description' => $request->description,
+            'is_active' => $request->has('is_active'),
         ]);
         return redirect()->route('user.zones.index')->with('success', 'Zone created successfully.');
     }

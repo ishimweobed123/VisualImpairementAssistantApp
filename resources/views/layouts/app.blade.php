@@ -17,7 +17,7 @@
                 <i class="fas fa-arrow-left"></i> Back
             </button>
             <span class="fw-bold me-auto d-flex align-items-center">
-                Admin User <i class="fas fa-user ms-2"></i>
+                User <i class="fas fa-user ms-2"></i>
                 @auth
                 <form method="POST" action="{{ route('logout') }}" class="ms-4 d-inline">
                     @csrf
