@@ -60,6 +60,15 @@
                                         <p>Reports</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logout') }}" class="d-flex justify-content-left align-items-center nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit(); closeDropdown(this);" style="text-decoration: none; ">
+                                        <i class="nav-icon mb-3 p-2 fas fa-file-alt"></i>
+                                        <p>
+                                                Logout
+                                            
+                                        </p>
+                                    </a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
