@@ -17,7 +17,7 @@
             <!-- start of trial -->
             <div class="section-menu-left d-flex justify-content-left w-100 min-h-screen">
                <aside id="sidebarMenu" class="menu-list main-sidebar sidebar-dark-primary elevation-4 p-4 md:w-64 flex-shrink-0 transition-all duration-300 ease-in-out">
-                    <a href="{{ route('admin.dashboard') }}" class="menu-item brand-link">
+                    <a href="{{ route('admin.dashboard') }}" class="menu-item brand-link" style="text-decoration: none; font-size: 1.1em; font-weight: 800; color: #374151;">
                         <span class="center-heading brand-text font-weight-light">VisualImpairedAssistance</span>
                     </a>
                     <div class="sidebar center">
@@ -25,37 +25,37 @@
                             <ul class="menu-list nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                                 
                                 <li class="nav-item menu-item">
-                                    <a href="{{ route('admin.dashboard') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.dashboard') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none;">
                                         <i class="nav-icon mb-3 p-2 fas fa-tachometer-alt" width="20" height="20"></i>
                                         <p>Dashboard</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.users.index') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.users.index') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none;">
                                         <i class="nav-icon mb-3 p-2 fas fa-users"></i>
                                         <p>Users</p>
                                     </a>
                                 </li>
                                 <li class="nav-item ">
-                                    <a href="{{ route('admin.devices.index') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.devices.index') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none;">
                                         <i class="nav-icon mb-3 p-2 fas fa-microchip"></i>
                                         <p >Devices</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.roles.index') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.roles.index') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none;">
                                         <i class="nav-icon mb-3 p-2 fas fa-user-shield"></i>
                                         <p>Roles & Permissions</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.danger-zones.index') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.danger-zones.index') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none;">
                                         <i class="nav-icon mb-3 p-2 fas fa-exclamation-triangle"></i>
                                         <p>Danger Zones</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.reports.index') }}" class="d-flex justify-content-left align-items-center nav-link">
+                                    <a href="{{ route('admin.reports.index') }}" class="d-flex justify-content-left align-items-center nav-link" style="text-decoration: none; ">
                                         <i class="nav-icon mb-3 p-2 fas fa-file-alt"></i>
                                         <p>Reports</p>
                                     </a>
@@ -66,7 +66,7 @@
                 </aside> 
                 <!-- starting of nested div -->
                 <div class="p-2 w-100 flex-grow">
-                    <nav class="main-header d-flex justify-content justify-between navbar navbar-expand navbar-white navbar-light bg-white shadow-sm rounded-md p-4">
+                    <nav class="main-header d-flex justify-content justify-between navbar navbar-expand navbar-white navbar-light bg-white shadow-sm rounded-md p-2">
                         <ul class="navbar-nav menu-list">
                             <li class="nav-item menu-item">
                                 <a id="pushMenuToggle" class="nav-link cursor-pointer text-gray-800 hover:text-blue-500 text-xl" href="#">
