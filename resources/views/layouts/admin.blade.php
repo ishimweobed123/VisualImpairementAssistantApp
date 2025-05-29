@@ -62,7 +62,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('logout') }}" class="d-flex justify-content-left align-items-center nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit(); closeDropdown(this);" style="text-decoration: none; ">
-                                        <i class="nav-icon mb-3 p-2 fas fa-file-alt"></i>
+                                        <i class="nav-icon mb-3 p-2 fas fa-sign-out-alt"></i>
                                         <p>
                                                 Logout
                                             
