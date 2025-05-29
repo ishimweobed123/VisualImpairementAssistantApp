@@ -131,7 +131,7 @@
             
         </div>
         <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-        <script>
+        <!-- <script>
             function closeDropdown(element) {
                 // Find the closest dropdown-menu and hide it
                 var dropdownMenu = element.closest('.dropdown-menu');
@@ -144,8 +144,41 @@
                     parent.classList.remove('show');
                 }
             }
+        </script> -->
+        <script>
+            /**
+             * Closes the closest Bootstrap dropdown menu by removing the 'show' class.
+             */
+            function closeDropdown(element) {
+                // Find the closest parent element with the 'dropdown-menu' class
+                var dropdownMenu = element.closest('.dropdown-menu');
+                if (dropdownMenu) {
+                    // Remove Bootstrap's 'show' class to hide the dropdown menu
+                    dropdownMenu.classList.remove('show');
+                }
+                
+                // Also check and remove 'show' from the parent dropdown container
+                // This is important for Bootstrap's dropdown component where 'show' can be on the parent `.dropdown` element.
+                var parent = dropdownMenu && dropdownMenu.parentElement;
+                if (parent && parent.classList.contains('show')) {
+                    parent.classList.remove('show');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const pushMenuToggle = document.getElementById('pushMenuToggleID');
+                const sidebarMenu = document.getElementById('sidebarMenuID');
+
+                if (pushMenuToggle && sidebarMenu) {
+                    pushMenuToggle.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent default link behavior (e.g., navigating to #)
+
+                        // Toggle the 'hidden' Tailwind CSS class on the sidebar to show/hide it
+                        sidebarMenu.classList.toggle('hidden');
+                    });
+                }
+            });
         </script>
-        
 
     </body>
 </html>
