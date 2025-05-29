@@ -41,6 +41,9 @@
                 <button type="submit" class="btn btn-primary">{{ __('Add Device') }}</button>
             </div>
         </div>
+          <button onclick="window.history.back()" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
     </form>
 </div>
 @endsection
