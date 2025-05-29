@@ -1,7 +1,9 @@
 @extends('layouts.app')
 @section('content')
-<div class="card-header">{{ __('Reset Password') }}</div>
-<div class="card-body">
+<div class="d-flex justify-content-center align-items-center">
+    
+<div class="card shadow-lg p-4" style="min-width:350px; max-width:800px; width:100%; border-radius: 1rem;">
+    <div class="card-header">{{ __('Reset Password') }}</div>
     <form method="POST" action="{{ route('password.update') }}">
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
@@ -41,5 +43,6 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 @endsection
