@@ -57,6 +57,9 @@
                     <input id="is_active" type="checkbox" name="is_active" value="1" class="form-check-input" {{ old('is_active', true) ? 'checked' : '' }}>
                 </div>
             </div>
+              <button onclick="window.history.back()" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
             <div class="form-group row mb-0">
                 <div class="col-md-6 offset-md-4">
                     <button type="submit" class="btn btn-primary">{{ __('Add Danger Zone') }}</button>
