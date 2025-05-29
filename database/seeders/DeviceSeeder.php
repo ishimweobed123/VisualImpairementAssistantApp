@@ -10,8 +10,8 @@ class DeviceSeeder extends Seeder
     {
         $user = User::where('email', 'admin@example.com')->first();
         Device::create([
-            'name' => 'Ultrasonic Sensor',
-            'type' => 'ultrasonic',
+            'name' => 'Smart cane',
+            'type' => 'wearable device',
             'status' => 'active',
             'user_id' => $user->id,
             'mac_address' => '00:1B:44:11:3A:B7',

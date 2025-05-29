@@ -10,7 +10,7 @@ return new class extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type')->nullable(); // e.g., ultrasonic, infrared
+            $table->string('type')->nullable(); // e.g., Smart cane, wearable
             $table->string('status')->default('active'); // active, inactive
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('mac_address')->unique()->nullable();

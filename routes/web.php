@@ -9,9 +9,11 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DangerZoneController;
+use App\Http\Controllers\UserPermissionController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Auth::routes(['verify' => true]);
 
@@ -34,5 +36,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/pdf', [ReportController::class, 'downloadPdf'])->name('reports.pdf');
         Route::get('/reports/csv', [ReportController::class, 'downloadCsv'])->name('reports.csv');
+        Route::get('permission-requests', [\App\Http\Controllers\Admin\PermissionRequestController::class, 'index'])->name('permission-requests.index');
+        Route::post('permission-requests/{request}/approve', [\App\Http\Controllers\Admin\PermissionRequestController::class, 'approve'])->name('permission-requests.approve');
+        Route::post('permission-requests/{request}/reject', [\App\Http\Controllers\Admin\PermissionRequestController::class, 'reject'])->name('permission-requests.reject');
     });
+
+    // Only non-admin users can request permissions
+    Route::post('/permission-request', [UserPermissionController::class, 'requestPermission'])
+        ->name('user.permission.request');
+
+    // User-facing zone routes for dynamic permissions
+    Route::resource('zones', \App\Http\Controllers\UserZoneController::class, [
+        'as' => 'user'
+    ]);
 });

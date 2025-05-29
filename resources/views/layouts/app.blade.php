@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html >
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -11,51 +11,22 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('home') }}">VisualImpairedAssistance</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+        <div class="container-fluid d-flex align-items-center">
+            <!-- Back button uses browser history -->
+            <button onclick="window.history.back()" class="btn btn-outline-secondary me-3">
+                <i class="fas fa-arrow-left"></i> Back
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('user.devices.index') }}">Devices</a>
-                        </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile.show') }}">Profile</a>
-                        </li> --}}
-                        @if (auth()->user()->hasRole('admin'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
-                            </li>
-                        @endif
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ auth()->user()->name }}
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        @csrf
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Register</a>
-                        </li>
-                    @endauth
-                </ul>
-            </div>
+            <span class="fw-bold me-auto d-flex align-items-center">
+                User <i class="fas fa-user ms-2"></i>
+                @auth
+                <form method="POST" action="{{ route('logout') }}" class="ms-4 d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link text-danger p-0 ms-2" style="text-decoration: none; font-weight: bold;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+                @endauth
+            </span>
         </div>
     </nav>
     <main class="py-4">

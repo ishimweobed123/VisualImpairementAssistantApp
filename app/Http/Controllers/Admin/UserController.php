@@ -102,6 +102,7 @@ class UserController extends Controller
         // Convert role IDs to names before syncing
         $roleNames = Role::whereIn('id', $request->roles ?? [])->pluck('name')->toArray();
         $user->syncRoles($roleNames);
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         Activity::create([
             'log_name' => 'user',
@@ -135,5 +136,25 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    }
+
+    /**
+     * Handle user permission request from home page.
+     */
+    public function requestPermission(Request $request)
+    {
+        $request->validate([
+            'permission' => 'required|string',
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        // You can store this in a table or send a notification/email to admin
+        // For demo, just log or flash a message
+        // Example: store in a table called permission_requests (not implemented here)
+
+        // Optionally, notify admin or log
+        // activity()->causedBy(auth()->user())->log('Requested permission: ' . $request->permission);
+
+        return redirect()->back()->with('permission_request_sent', 'Your permission request has been sent to the admin.');
     }
 }
