@@ -16,7 +16,7 @@
         <div class="wrapper">
             <!-- start of trial -->
             <div class="section-menu-left d-flex justify-content-left w-100 min-h-screen">
-               <aside id="sidebarMenu" class="menu-list main-sidebar sidebar-dark-primary elevation-4 p-4 md:w-64 flex-shrink-0 transition-all duration-300 ease-in-out">
+               <aside id="sidebarMenu" class="menu-list main-sidebar sidebar-dark-primary elevation-4 p-4 md:w-64 flex-shrink-0 transition-all duration-300 ease-in-out position-fixed top-0 start-0 z-1000">
                     <a href="{{ route('admin.dashboard') }}" class="menu-item brand-link" style="text-decoration: none; font-size: 1.1em; font-weight: 800; color: #374151;">
                         <span class="center-heading brand-text font-weight-light">VisualImpairedAssistance</span>
                     </a>
@@ -74,8 +74,8 @@
                     </div>
                 </aside> 
                 <!-- starting of nested div -->
-                <div class="p-2 w-100 flex-grow">
-                    <nav class="main-header d-flex justify-content justify-between navbar navbar-expand navbar-white navbar-light bg-white shadow-sm rounded-md p-2">
+                <div style="margin-left: 16rem;" class="p-2 w-100 flex-grow">
+                    <nav class="main-header d-flex justify-content justify-between navbar navbar-expand navbar-white navbar-light bg-white shadow-sm rounded-md p-2 mt-2">
                         <ul class="navbar-nav menu-list">
                             <li class="nav-item menu-item">
                                 <a id="pushMenuToggle" class="nav-link cursor-pointer text-gray-800 hover:text-blue-500 text-xl" href="#">

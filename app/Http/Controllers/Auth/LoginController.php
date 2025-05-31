@@ -5,6 +5,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -30,5 +31,18 @@ class LoginController extends Controller
             'causer_type' => User::class,
             'causer_id' => $user->id,
         ]);
+    }
+
+    public function login(Request $request)
+    {
+        $this->validateLogin($request);
+
+        // Always remember the user (persistent login)
+        $remember = true;
+        if (Auth::attempt($this->credentials($request), $remember)) {
+            return redirect()->intended($this->redirectPath());
+        }
+
+        return $this->sendFailedLoginResponse($request);
     }
 }

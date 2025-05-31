@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $adminRole->syncPermissions(Permission::all());
 
         $userRole = Role::firstOrCreate(['name' => 'user']);
-        $userRole->syncPermissions(['device-list', 'device-create']);
+        $userRole->syncPermissions(['device-list', 'device-create','']);
 
         \App\Models\User::factory()->create([
             'name' => 'Admin User',
